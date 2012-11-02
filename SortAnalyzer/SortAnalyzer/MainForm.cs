@@ -73,7 +73,7 @@ namespace SortAnalyzer
             SortReport quickReport = startSortingProc("Quick-sort.exe", numbers);
             BeginInvoke(printFunc, string.Format("Quick-sort is finished at {0} ms.", quickReport.millisecs));
             SortReport heapReport = startSortingProc("Heap-sort.exe", numbers);
-            BeginInvoke(printFunc, string.Format("Heap-sort is finished at {0} ms.", quickReport.millisecs));
+            BeginInvoke(printFunc, string.Format("Heap-sort is finished at {0} ms.", heapReport.millisecs));
         }
 
         SortReport startSortingProc(string procName, int[] numbers)
@@ -89,7 +89,8 @@ namespace SortAnalyzer
             proc.StartInfo = procInfo;
             proc.Start();
 
-            int mills0 = DateTime.Now.Millisecond;
+            var watch = new Stopwatch();
+            watch.Start();
 
             proc.StandardInput.WriteLine(numbers.Length);
             for (int i = 0; i < numbers.Length; ++i)
@@ -99,11 +100,11 @@ namespace SortAnalyzer
            
             string result = proc.StandardOutput.ReadToEnd();
 
-            int mills1 = DateTime.Now.Millisecond;
+            watch.Stop();
 
             var report = new SortReport();
             report.output = result;
-            report.millisecs = mills1 - mills0;
+            report.millisecs = watch.ElapsedMilliseconds;
 
             return report;
         }

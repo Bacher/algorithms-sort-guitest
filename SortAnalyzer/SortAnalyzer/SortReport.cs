@@ -8,6 +8,6 @@ namespace SortAnalyzer
     class SortReport
     {
         public string output;
-        public int millisecs;
+        public long millisecs;
     }
 }
