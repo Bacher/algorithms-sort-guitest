@@ -56,6 +56,13 @@ namespace SortAnalyzer
                 BeginInvoke(printDelegate, "Тестирование шага завершено.");
 
                 bw.ReportProgress(step * 100 / args.stepsCount);
+                if (bw.CancellationPending)
+                {
+                    BeginInvoke(printDelegate, "==================================================");
+                    BeginInvoke(printDelegate, "Тестирование отменено!");
+                    BeginInvoke(printDelegate, "==================================================");
+                    break;
+                }
             }
         }
 
@@ -120,7 +127,10 @@ namespace SortAnalyzer
             {
                 MessageBox.Show("Анализ алгоритмов завершен.");
             }
-            progress.Value = 0;            
+            progress.Value = 0;
+
+            btnAnalyze.Enabled = true;
+            btnCancel.Enabled = false;
         }
 
         void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -156,6 +166,9 @@ namespace SortAnalyzer
 
         private void btnAnalyze_Click(object sender, EventArgs e)
         {
+            btnAnalyze.Enabled = false;
+            btnCancel.Enabled = true;
+
             txtResults.Clear();
 
             bw.RunWorkerAsync(new BWEventArgs()
@@ -164,6 +177,11 @@ namespace SortAnalyzer
                 endLength = int.Parse(txtEnd.Text),
                 stepsCount = int.Parse(txtCount.Text)
             });
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            bw.CancelAsync();
         }
 
         
